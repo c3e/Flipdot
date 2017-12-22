@@ -35,7 +35,7 @@ void clearAll(int color) {
 
   for (i=0; i<X_SIZE; i++) {
     Serial.println(i);
-    for (j=0; j<Y_PIXELS; j++) {
+    for (j=0; j<16; j++) {
       setFrameBuffer(i,j,color);
       pixel(i,j,color);
     }

@@ -55,11 +55,11 @@ void flipdotSetup() {
 //===================================================
 void pixel(int x, int y, int state) {
   int panelNr, colNr;
-  if ((x<X_SIZE+1) && (x>=0) && (y>=0) && (y<32)) {
+  if ((x<X_SIZE+1) && (x>=0) && (y>=0) && (y<=32)) {
       panelNr = x/28;   // integer division
       colNr = x%28;     // modulo division
       colSelect(colNr,state);
-      rowSelect(y+1,state);
+      rowSelect(y,state);
 
       writePanel(panelNr);
   }
@@ -117,19 +117,19 @@ void rowSelect(int row, int state) {
   //if (row>13) row++; // nothing
   //if (row>14) row++; // line 6 dead
   //if (row>15) row++; // line 5 dead
-
-  row++;
+  
   if (row>6) row++; // 6 & 7 alive
   if (row>14) row++;
-  if (row>22) row++;
-
+  //if (row>22) row++;
+  
+  //if  (row > 6) row++;
   // Row# 0..5, digital pins 6,7,3,4,5
   // Scrambled to make up for wiring
   digitalWrite(6, row & 1);  // 00001, 1,3,5,7,9,11,13,15
   digitalWrite(7, row & 2);  // 00010, 2,3,6,7,10,11,14,15
-  digitalWrite(3, row & 4);  // 00100, 4,5,6,7,12,13,14,15
-  digitalWrite(4, row & 8);  // 01000, 8,9,10,11,12,13,14,15
-  digitalWrite(5, row & 16); // 10000, 16
+  digitalWrite(5, row & 4);  // 00100, 4,5,6,7,12,13,14,15
+  digitalWrite(3, row & 8);  // 01000, 8,9,10,11,12,13,14,15
+  digitalWrite(4, row & 16); // 10000, 16
 
   if (state == SET) {
      digitalWrite(9, HIGH); // SET (immer zuerst nach HIGH)

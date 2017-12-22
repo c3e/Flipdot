@@ -43,6 +43,12 @@ int inByte;
 String commandLine;
 boolean umlaut;
 
+
+void rowcount(){
+  for ( int i = 0 ; i < 64; i++)
+    pixel(i,i,1);
+}
+
 void setup() {
   
   Serial.begin(9600);
@@ -129,6 +135,7 @@ void loop() {
         case 'X':  crossTrainer(xVal,yVal); break;
         case 'D':  panelDiagonalLine(); break;
         case 'E':  panelDiagonalLineClean(); break;
+        case 'N':  rowcount();
         default: break;
       }
     }
