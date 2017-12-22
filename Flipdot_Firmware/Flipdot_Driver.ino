@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////
 
 #include "Flipdot.h"
+#define X_SIZE 112    // 112 column
 
 //###################### Public Functions #############################################
 
@@ -54,7 +55,7 @@ void flipdotSetup() {
 //===================================================
 void pixel(int x, int y, int state) {
   int panelNr, colNr;
-  if ((x<169) && (x>=0) && (y>=0) && (y<32)) {
+  if ((x<X_SIZE+1) && (x>=0) && (y>=0) && (y<32)) {
       panelNr = x/28;   // integer division
       colNr = x%28;     // modulo division
       colSelect(colNr,state);
@@ -75,19 +76,65 @@ void pixel(int x, int y, int state) {
 //             state = RESET Pixel wird zurückgesetzt
 //===================================================
 void rowSelect(int row, int state) {
+  // 2,3,4,5,8,9,10,11,15,16 alive, no skipped rows
+  // 1,6,7,12,13,14 dead, no skipped rows
+
+  //row--; // line 1 alive, but 5,6,7, 12,13,14 dead
+  //if(row==0) { row--; } // was ignored?
+  //if(row==1) { row--; } // line 1 alive, 2 dead
+  
+/*
+  if(row > 0 && row < 5) { 
+    row--; // line 1-5 alive, 6,7,8,12,13,14 dead
+  } else {
+    row++;
+    //if (row>6) row++;
+    //if (row>14) row++;
+    //if (row>22) row++;
+  } 
+*/
+
+  //if (row>6) row++; // 7 alive, 11 dead
+  //if (row==7) row++; // 7, 11 dead
+
+  //if row == 5 and row-- then line 10 dead
+  //if row == 5 and row++ then line 6,7,8,9,12,13,14 dead
+
+  //row++; // line 2 dead
+  //if (row>1) row++; // line 3 dead
+  //if (row>2) row++; // line 4 dead
+  //if (row>4) row++; // line 9 dead
+  //if (row>5) row++; // line 10 dead
+  // if 4 & 5 are skipped, line 7 is alive, 9 and 10 are dead (row + 2)
+
+  //if (row>6) row++; // line 16 dead
+  //if (row>7) row++; // line 15 dead
+  //if (row>8) row++; // line 16 dead
+  //if (row>9) row++; // nothing
+  //if (row>10) row++; // nothing
+  //if (row>11) row++; // nothing
+  //if (row>12) row++; // nothing
+  //if (row>13) row++; // nothing
+  //if (row>14) row++; // line 6 dead
+  //if (row>15) row++; // line 5 dead
+
   row++;
-  if (row>6) row++;
+  if (row>6) row++; // 6 & 7 alive
   if (row>14) row++;
   if (row>22) row++;
-  digitalWrite(3, row & 4);   // Scrambled to make up for wiring
-  digitalWrite(4, row & 8);
-  digitalWrite(5, row & 16);
-  digitalWrite(6, row & 1);
-  digitalWrite(7, row & 2);
+
+  // Row# 0..5, digital pins 6,7,3,4,5
+  // Scrambled to make up for wiring
+  digitalWrite(6, row & 1);  // 00001, 1,3,5,7,9,11,13,15
+  digitalWrite(7, row & 2);  // 00010, 2,3,6,7,10,11,14,15
+  digitalWrite(3, row & 4);  // 00100, 4,5,6,7,12,13,14,15
+  digitalWrite(4, row & 8);  // 01000, 8,9,10,11,12,13,14,15
+  digitalWrite(5, row & 16); // 10000, 16
+
   if (state == SET) {
      digitalWrite(9, HIGH); // SET (immer zuerst nach HIGH)
      digitalWrite(8, LOW);  // Diese beiden Pins müssen immer komplementär sein - sonst raucht es
- } else if (state == RESET) {
+  } else if (state == RESET) {
     digitalWrite(8, HIGH); // Diese beiden Pins müssen immer komplementär sein - sonst raucht es
     digitalWrite(9, LOW);  // RESET
   } else {
@@ -114,7 +161,6 @@ void colSelect(int col, int state) {
   digitalWrite(A4, col & 16);
 
   digitalWrite(A5, state);
-
 }
 
 //===================================================
@@ -125,7 +171,6 @@ void colSelect(int col, int state) {
 //             Gibt die Panelnummer an. 
 //===================================================
 void writePanel(int panel) {
-
   if (panel >= 0) {
     digitalWrite(10, panel & 1);
     digitalWrite(11, panel & 2);

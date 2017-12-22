@@ -64,7 +64,7 @@ void loop() {
   
   if (Serial.available() > 0) {
     c = Serial.read();
-    //Serial.println((int)c);
+    Serial.println((int)c);
      
     if (commandLine.length()<100) {
       commandLine += c;
@@ -110,23 +110,26 @@ void loop() {
       commandLine = "";    // Reset command mode
 
       // ======= Debug only ===========
-      //Serial.println((char)cmd);
-      //Serial.println(color);
-      //Serial.println(xVal);
-      //Serial.println(yVal);
-      //Serial.println(fontSize);
-      //Serial.println(outputString);
+      Serial.println((char)cmd);
+      Serial.println(color);
+      Serial.println(xVal);
+      Serial.println(yVal);
+      Serial.println(fontSize);
+      Serial.println(outputString);
     
       // ======= Execute the respective command ========
       switch (cmd) {
         case 'C':  clearAll(color); Serial.println("!"); break;
-        //case 'Q':  quickClear(color); break;
+        case 'Q':  quickClear(color); break;
         case 'T':  printTest(yVal); break;
         case 'S':  setPixel(xVal,yVal,color); break;
         case 'H':  hLine(yVal,color); break;
         case 'V':  vLine(xVal,color); break;
         case 'P':  printString(xVal, yVal, color, fsize, outputString); break;
-        case 'X':  crossTrainer(xVal,yVal); 
+        case 'X':  crossTrainer(xVal,yVal); break;
+        case 'D':  panelDiagonalLine(); break;
+        case 'E':  panelDiagonalLineClean(); break;
+        default: break;
       }
     }
   }
@@ -137,24 +140,22 @@ void loop() {
 // For debugging only
 //===========================
 void panelTest() {
-  
-   writePanel(-1);
-   //delay(500);
+  writePanel(-1);
+  delay(500);
 
 // ============== Alles Schwarz ============
-/*   colSelect(i,SET);
+   colSelect(i,SET);
    rowSelect(j,SET);
    writePanel(0);
-//   delay(10);
+   delay(10);
    colSelect(i,OFF);
    rowSelect(j,OFF);
-*/
 
 // ========== Alles Gelb ==============
    colSelect(i,RESET);
    rowSelect(j,RESET);
    writePanel(0);
-//   delay(10);
+   delay(10);
    colSelect(i,OFF);
    rowSelect(j,OFF);
 
@@ -164,7 +165,42 @@ void panelTest() {
       j++;
    }
    if (j>31) j=0;
-  
+}
+
+int xStartIndex = 0;
+int xSteps = 112;
+int xStepsOffset = 0;
+
+int yStartIndex = 0;
+int ySteps = 28;
+int yStepsOffset = 0;
+
+void panelDiagonalLine() {
+  int y=yStartIndex;
+  for(int x=xStartIndex; x<xSteps; x++) {
+    if(y<ySteps) {
+      y++;
+    }
+    else if(y==ySteps && x<xSteps) {
+      y=yStartIndex;
+    }
+    setFrameBuffer(x+xStepsOffset, y+yStepsOffset, BLACK);
+    setPixel(x+xStepsOffset, y+yStepsOffset, BLACK);
+  }
+}
+
+void panelDiagonalLineClean() {
+  int y=yStartIndex;
+  for(int x=xStartIndex; x<xSteps; x++) {
+    if(y<ySteps) {
+      y++;
+    }
+    else if(y==ySteps && x<xSteps) {
+      y=yStartIndex;
+    }
+    setFrameBuffer(x+xStepsOffset, y+yStepsOffset, YELLOW);
+    setPixel(x+xStepsOffset, y+yStepsOffset, YELLOW);
+  }
 }
 
 //===================================
@@ -172,14 +208,13 @@ void panelTest() {
 //===================================
 void printTest(int y) {   
   int i,j;
-      
-    clearAll(OFF);
-//    printFont();
-    hLine(y,1);
-    i = printString(2,1,BLACK,MEDIUM,"Here is a short Text String !");
-//    i = printString(2,15,YELLOW,LARGE,"Noch ein Test \x81");
- //   i = printString(2,18,ON,"Passt das noch ?");
-//    i=printChar(10,2,ON,'A');
+  clearAll(YELLOW);
+  printString(y, 0, BLACK, MEDIUM, "Noch ein Test \x81");
+    //printFont();
+    //hLine(y,1);
+//  printString(2,1,BLACK,MEDIUM,"Here is a short Text String !");
+//  printString(2,15,YELLOW,LARGE,"Noch ein Test \x81");
+//  printString(2,18,ON,"Passt das noch ?");
+//  printChar(10,2,ON,'A');
     printFrameBuffer();
-
 }

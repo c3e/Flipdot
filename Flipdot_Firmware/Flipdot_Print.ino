@@ -9,9 +9,10 @@
 #include "font8x12.h"
 
 //================== Constants ===============================
-#define X_SIZE 168    // 128 column
-#define Y_SIZE 4      // 28 rows (represented by 4 bytes)
-#define Y_PIXELS 24   // True Y-Size if the display
+//#define X_SIZE 112    // 112 column
+#define X_SIZE 112    // 112 column
+#define Y_SIZE 4      // 28 rows (represented by 2 bytes)
+#define Y_PIXELS 16   // True Y-Size if the display
 #define OFF 0
 #define ON 1
 
@@ -30,17 +31,15 @@ unsigned char frameBuffer[X_SIZE][Y_SIZE];
 // color = YELLOW  all pixels set to yellow
 //====================================================
 void clearAll(int color) {
-   int i,j;
+  int i,j;
 
-//   for (i=0; i<X_SIZE; i++) {
-   for (i=0; i<168; i++) {
-     Serial.println(i);
-     for (j=0; j<Y_PIXELS; j++) {
-       setFrameBuffer(i,j,color);
-       pixel(i,j,color);
- //      delay(100);     // Slow down for debug
-     }
-   }
+  for (i=0; i<X_SIZE; i++) {
+    Serial.println(i);
+    for (j=0; j<Y_PIXELS; j++) {
+      setFrameBuffer(i,j,color);
+      pixel(i,j,color);
+    }
+  }
 }
 
 //=====================================================
@@ -55,12 +54,13 @@ void quickClear(int color) {
    int i,j;
    int old;
 
-   for (i=0; i<X_SIZE; i++) 
-     for (j=0; j<Y_PIXELS; j++) {
-       old = getFrameBuffer(i,j);
-       setFrameBuffer(i,j,color);
-       if (old!=color) pixel(i,j,color);   // Write to Hardware only if changed
-     }
+  for (i=0; i<X_SIZE; i++) {
+    for (j=0; j<Y_PIXELS; j++) {
+      old = getFrameBuffer(i,j);
+      setFrameBuffer(i,j,color);
+      if (old!=color) pixel(i,j,color);   // Write to Hardware only if changed
+    }
+  }
 }
 
 //====================================================
@@ -69,9 +69,7 @@ void quickClear(int color) {
 // color = YELLOW  all pixels set to yellow
 //====================================================
 void setPixel(int x, int y, int color) {
-  
    pixel(x,y,color);
-   
 }
 
 
@@ -147,7 +145,7 @@ int printString(int xOffs, int yOffs, int color, int size, String s) {
 
   while ((i<s.length()) && (i<100)) {
     c = s.charAt(i);
-    //Serial.print((int) c); 
+    Serial.print((int) c); 
     
     if (c == -61) {
       if (i < s.length()-1) i++;
@@ -164,8 +162,8 @@ int printString(int xOffs, int yOffs, int color, int size, String s) {
       }
     } else uc=c;
 
-    //Serial.print(" --> ");
-    //Serial.println(uc); // debug only
+    Serial.print(" --> ");
+    Serial.println(uc); // debug only
     
     switch(size) {
       case SMALL: x = printChar6x8(x, y, color, uc); break;
@@ -298,12 +296,18 @@ void printFrameBuffer() {
 	maxBits=8;
     for (y=0; y<Y_SIZE; y++) {
 	   w = 1;   // most right bit set
+
 	   if (y == Y_SIZE-1) {
 		   maxBits = 8 - Y_SIZE*8 % Y_PIXELS;
-	   } 
+	   }
+
 	   for (bitNo=0; bitNo<maxBits; bitNo++) {
 		   for (x=0; x<X_SIZE; x++) {
-			   if (frameBuffer[x][y] & w) Serial.print("#"); else Serial.print(".");
+          if (frameBuffer[x][y] & w) {
+            Serial.print("#"); 
+          } else {
+            Serial.print(".");
+          } 
 		   }  
 		   w = w<<1; 
 		   Serial.println("");
