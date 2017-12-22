@@ -51,7 +51,7 @@ void rowcount(){
 
 void setup() {
   
-  Serial.begin(9600);
+  Serial.begin(115200);
   flipdotSetup();
   umlaut = false;
 }
@@ -129,7 +129,7 @@ void loop() {
         case 'Q':  quickClear(color); break;
         case 'T':  printTest(yVal); break;
         case 'S':  setPixel(xVal,yVal,color); break;
-        case 'H':  hLine(yVal,color); break;
+        case 'H':  hLine(xVal,color); break;
         case 'V':  vLine(xVal,color); break;
         case 'P':  printString(xVal, yVal, color, fsize, outputString); break;
         case 'X':  crossTrainer(xVal,yVal); break;
