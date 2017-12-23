@@ -33,6 +33,13 @@
 //   "\": 
 //     The command lines is terminated by the return character
 //     It gets evaluated after reception of that character
+//    TODO:
+//     - Q (and probably every other operation using the 'framebuffer' is completely foobar'd
+//     - CONSTANTS (like BLACK, YELLOW aren't used everywhere, sometimes even inverted (Line 90)
+//     - Commands are currently terminated with \ (not \n aka newline/line feed) which is as intuitive as the three shells
+//     - Command parsing is.. quite creative
+//     - Documented pin order is screwed (e.g. D0/D1 isn't used at all and should not be used)
+//    
 //             
 ////////////////////////////////////////////////////////////////////////////
 
