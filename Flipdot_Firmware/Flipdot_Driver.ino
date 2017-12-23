@@ -20,7 +20,7 @@
 /////////////////////////////////////////////////////
 
 #include "Flipdot.h"
-#define X_SIZE 112    // 112 column
+#define X_SIZE 112    // 112 columns aka display width
 
 //###################### Public Functions #############################################
 
@@ -78,45 +78,6 @@ void pixel(int x, int y, int state) {
 void rowSelect(int row, int state) {
   // 2,3,4,5,8,9,10,11,15,16 alive, no skipped rows
   // 1,6,7,12,13,14 dead, no skipped rows
-
-  //row--; // line 1 alive, but 5,6,7, 12,13,14 dead
-  //if(row==0) { row--; } // was ignored?
-  //if(row==1) { row--; } // line 1 alive, 2 dead
-  
-/*
-  if(row > 0 && row < 5) { 
-    row--; // line 1-5 alive, 6,7,8,12,13,14 dead
-  } else {
-    row++;
-    //if (row>6) row++;
-    //if (row>14) row++;
-    //if (row>22) row++;
-  } 
-*/
-
-  //if (row>6) row++; // 7 alive, 11 dead
-  //if (row==7) row++; // 7, 11 dead
-
-  //if row == 5 and row-- then line 10 dead
-  //if row == 5 and row++ then line 6,7,8,9,12,13,14 dead
-
-  //row++; // line 2 dead
-  //if (row>1) row++; // line 3 dead
-  //if (row>2) row++; // line 4 dead
-  //if (row>4) row++; // line 9 dead
-  //if (row>5) row++; // line 10 dead
-  // if 4 & 5 are skipped, line 7 is alive, 9 and 10 are dead (row + 2)
-
-  //if (row>6) row++; // line 16 dead
-  //if (row>7) row++; // line 15 dead
-  //if (row>8) row++; // line 16 dead
-  //if (row>9) row++; // nothing
-  //if (row>10) row++; // nothing
-  //if (row>11) row++; // nothing
-  //if (row>12) row++; // nothing
-  //if (row>13) row++; // nothing
-  //if (row>14) row++; // line 6 dead
-  //if (row>15) row++; // line 5 dead
   
   if (row>6) row++; // 6 & 7 alive
   if (row>14) row++;
@@ -125,6 +86,7 @@ void rowSelect(int row, int state) {
   //if  (row > 6) row++;
   // Row# 0..5, digital pins 6,7,3,4,5
   // Scrambled to make up for wiring
+  // Matching our very straight wiring. Details may follow
   digitalWrite(6, row & 1);  // 00001, 1,3,5,7,9,11,13,15
   digitalWrite(7, row & 2);  // 00010, 2,3,6,7,10,11,14,15
   digitalWrite(5, row & 4);  // 00100, 4,5,6,7,12,13,14,15
@@ -177,7 +139,7 @@ void writePanel(int panel) {
     digitalWrite(12, panel & 4);
 
     digitalWrite(13, LOW);   // Kurzer Puls, der das Panel enabled
-    delay(3);
+    delay(3);                // At least for our panel 3ms are long enough and accelerates display speed.
   } 
   digitalWrite(13, HIGH);  
 }
